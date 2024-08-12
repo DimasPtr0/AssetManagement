@@ -1,0 +1,83 @@
+========================================================================================
+CREATE TABLE users 
+( id INT AUTO_INCREMENT PRIMARY KEY, 
+username VARCHAR(255) UNIQUE NOT NULL, 
+password VARCHAR(255) NOT NULL, 
+role ENUM('admin', 'karyawan', 'user') NOT NULL, 
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP );
+
+CREATE TABLE categories 
+( id INT AUTO_INCREMENT PRIMARY KEY, 
+name VARCHAR(255) NOT NULL, 
+description TEXT, 
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP );
+
+CREATE TABLE assets 
+( id INT AUTO_INCREMENT PRIMARY KEY, 
+category_id INT NOT NULL, 
+name VARCHAR(255) NOT NULL, 
+serial_number VARCHAR(255) UNIQUE, 
+purchase_date DATE, 
+warranty_end_date DATE, 
+status ENUM('active', 'maintenance', 'decommissioned') NOT NULL DEFAULT 'active', 
+created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+FOREIGN KEY (category_id) REFERENCES categories(id) ON DELETE CASCADE );
+
+CREATE TABLE inventory_details 
+( asset_id INT PRIMARY KEY, 
+ip_address VARCHAR(255), 
+mac_address VARCHAR(255), 
+location VARCHAR(255), 
+notes TEXT, 
+FOREIGN KEY (asset_id) REFERENCES assets(id) ON DELETE CASCADE );
+
+
+========================================================================================
+
+
+Pseudocode for Asset Management Website
+*Setup Database Connection
+Define database credentials (host, username, password, database name).
+Establish a connection to the database.
+
+*User Authentication
+Login Page
+Create a form for username and password.
+On form submission, validate credentials against the users table.
+If valid, create a session and redirect to the dashboard.
+
+Registration Page (Optional, for admin role)
+Create a form for username, password, and role.
+On form submission, insert new user into the users table.
+
+*Dashboard
+Display different options based on the user role (admin, karyawan, user).
+Options could include viewing assets, adding assets, managing categories, etc.
+
+*Manage Categories
+Add Category
+Form to input name and description.
+Insert data into the categories table.
+View Categories
+Fetch all categories from the categories table and display.
+Edit/Delete Category (Optional)
+
+*Manage Assets
+Add Asset
+Form to input asset details including category.
+Insert data into the assets table.
+View Assets
+Fetch all assets, join with categories to display category name.
+Edit/Delete Asset (Optional)
+
+*Inventory Details
+Add/Edit Inventory Detail
+Form to input or edit inventory details for an asset.
+Insert or update data in the inventory_details table.
+
+*Logout
+Destroy the session and redirect to the login page.
+========================================================================================
