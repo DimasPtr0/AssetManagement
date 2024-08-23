@@ -15,9 +15,9 @@ if (isset($_GET['id'])) {
     $sql = "DELETE FROM assets WHERE id='$id'";
 
     if ($conn->query($sql) === TRUE) {
-        header("Location: index.php?message=deleted");
+        header("Location: /PLNproject/asset_management/home_admin.php?message=succes deleted");
     } else {
-        header("Location: index.php?message=error");
+        header("Location: /PLNproject/asset_management/home_admin.php?message=error");
     }
     exit;
 }

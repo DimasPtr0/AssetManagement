@@ -92,10 +92,6 @@
                             echo "<td>" . $row['mac_address'] . "</td>";
                             echo "<td>" . $row['location'] . "</td>";
                             echo "<td>" . $row['notes'] . "</td>";
-                            echo "<td>";
-                            echo "<a href='edit_inventory.php?id=" . $row['asset_id'] . "' class='btn btn-warning btn-sm'>Edit</a> ";
-                            echo "<a href='delete_inventory.php?id=" . $row['asset_id'] . "' class='btn btn-danger btn-sm' onclick='return confirm(\"Are you sure you want to delete this record?\")'>Delete</a>";
-                            echo "</td>";
                             echo "</tr>";
                         }
                     } else {

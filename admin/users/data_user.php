@@ -28,6 +28,7 @@ $result = $conn->query($sql);
 <body>
     <div class="container mt-5">
         <h2>Data User</h2>
+        <a href="/PLNproject/asset_management/home_admin.php" class="btn btn-secondary">Home</a>
         <table class="table table-bordered">
             <thead>
                 <tr>
@@ -51,7 +52,6 @@ $result = $conn->query($sql);
                         echo "<td>" . $row["updated_at"] . "</td>";
                         echo "<td>
                                 <a href='edit_user.php?id=" . $row["id"] . "' class='btn btn-warning btn-sm'>Edit</a>
-                                <a href='copy_user.php?id=" . $row["id"] . "' class='btn btn-info btn-sm'>Copy</a>
                                 <a href='delete_user.php?id=" . $row["id"] . "' class='btn btn-danger btn-sm'>Delete</a>
                               </td>";
                         echo "</tr>";

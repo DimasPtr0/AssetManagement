@@ -12,6 +12,7 @@ if ($conn->connect_error) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $category_id = $_POST['category_id'];
+    $unit = $_POST['unit'];
     $name = $_POST['name'];
     $serial_number = $_POST['serial_number'];
     $purchase_date = $_POST['purchase_date'];
@@ -28,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         header("Location: data_asset.php?message=duplicate_serial_number");
     } else {
         // Jika serial_number belum ada, lakukan INSERT
-        $sql = "INSERT INTO assets (category_id, name, serial_number, purchase_date, warranty_end_date, people_name, jabatan) VALUES ('$category_id', '$name', '$serial_number', '$purchase_date', '$warranty_end_date', '$people_name', '$jabatan')";
+        $sql = "INSERT INTO assets (category_id, unit, name, serial_number, purchase_date, warranty_end_date, people_name, jabatan) VALUES ('$category_id', '$unit', '$name', '$serial_number', '$purchase_date', '$warranty_end_date', '$people_name', '$jabatan')";
 
         if ($conn->query($sql) === TRUE) {
             header("Location: data_asset.php?message=success");
@@ -56,6 +57,10 @@ $conn->close();
             <div class="form-group">
                 <label for="category_id">Category ID:</label>
                 <input type="text" class="form-control" id="category_id" name="category_id" required>
+            </div>
+            <div class="form-group">
+                <label for="unit">Unit:</label> <!-- Mengubah name dari "category_id" menjadi "unit" -->
+                <input type="text" class="form-control" id="unit" name="unit" required> <!-- Mengubah id dari "category_id" menjadi "unit" -->
             </div>
             <div class="form-group">
                 <label for="name">Name:</label>

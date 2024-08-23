@@ -123,11 +123,13 @@ $result = $conn->query($sql);
             <button type="submit" class="btn btn-secondary">Search</button>
         </form>
         <a href="add_asset.php" class="btn btn-primary mb-3">Add New Asset</a>
+        <a href="/PLNproject/asset_management/home_admin.php" class="btn btn-secondary mb-3">Home</a>
         <table class="table table-bordered table-hover">
             <thead class="thead-dark">
                 <tr>
                     <th>ID</th>
                     <th>Category ID</th>
+                    <th>Unit</th>
                     <th>Name</th>
                     <th>Serial Number</th>
                     <th>People Name</th>
@@ -149,6 +151,7 @@ $result = $conn->query($sql);
                         echo "<tr>";
                         echo "<td>" . $row['id'] . "</td>";
                         echo "<td>" . $row['category_id'] . "</td>";
+                        echo "<td>" . $row['unit'] . "</td>";
                         echo "<td>" . $row['name'] . "</td>";
                         echo "<td>" . $row['serial_number'] . "</td>";
                         echo "<td>" . $row['people_name'] . "</td>";

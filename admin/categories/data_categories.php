@@ -9,7 +9,7 @@
         <h2>Categories</h2>
         <!-- add categories -->
         <a href="add_categories.php" class="btn btn-primary mb-3">Add New Category</a>
-
+        <a href="/PLNproject/asset_management/home_admin.php" class="btn btn-secondary">Home</a>
         <!-- Tabel Data Categories -->
         <div class="table-responsive">
             <table class="table table-bordered table-striped">

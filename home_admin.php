@@ -33,14 +33,13 @@ $maintenanceAssets = $pdo->query("SELECT COUNT(*) FROM assets WHERE status = 'ma
 $decommissionedAssets = $pdo->query("SELECT COUNT(*) FROM assets WHERE status = 'decommissioned'")->fetchColumn();
 
 // Get data from tables with limit
-$sql = "SELECT * FROM assets WHERE category_id LIKE :keyword OR name LIKE :keyword LIMIT $start_from, $limit";
+$sql = "SELECT * FROM assets WHERE category_id LIKE :keyword OR name LIKE :keyword LIMIT :start_from, :limit";
 $stmt = $pdo->prepare($sql);
-$stmt->execute(['keyword' => "%$search_keyword%"]);
+$stmt->bindValue(':keyword', "%$search_keyword%", PDO::PARAM_STR);
+$stmt->bindValue(':start_from', $start_from, PDO::PARAM_INT);
+$stmt->bindValue(':limit', $limit, PDO::PARAM_INT);
+$stmt->execute();
 $assets = $stmt->fetchAll();
-
-$inventory_details = $pdo->query("SELECT * FROM inventory_details LIMIT $start_from, $limit")->fetchAll();
-$users = $pdo->query("SELECT * FROM users")->fetchAll();
-$categories = $pdo->query("SELECT * FROM categories")->fetchAll();
 
 // Calculate total pages
 $total_pages = ceil($assetCount / $limit);
@@ -222,13 +221,34 @@ $total_pages = ceil($assetCount / $limit);
         <ul class="nav nav-pills nav-stacked">
             <br>
             <br>
-            <li class="active"><a href="home_admin.php">Home</a></li>
-            <li><a href="admin/categories/data_categories.php">Categories</a></li>
-            <li><a href="admin/asset/data_asset.php">Assets</a></li>
-            <li><a href="admin/inventory/data_inventory.php">Inventory Details</a></li>
-            <li><a href="admin/users/data_user.php">Users</a></li>
+            <li class="active">
+                <a href="home_admin.php">
+                    <i class="fa fa-home"></i> Home
+                </a>
+            </li>
+            <li>
+                <a href="admin/categories/data_categories.php">
+                    <i class="fa fa-list"></i> Categories
+                </a>
+            </li>
+            <li>
+                <a href="admin/asset/data_asset.php">
+                    <i class="fa fa-archive"></i> Assets
+                </a>
+            </li>
+            <li>
+                <a href="admin/inventory/data_inventory.php">
+                    <i class="fa fa-database"></i> Inventory Details
+                </a>
+            </li>
+            <li>
+                <a href="admin/users/data_user.php">
+                    <i class="fa fa-users"></i> Users
+                </a>
+            </li>
         </ul>
     </div>
+
 
     <!-- Main Content -->
     <div class="content">
@@ -238,11 +258,11 @@ $total_pages = ceil($assetCount / $limit);
             <h1>Welcome | <?php echo htmlspecialchars($user['username'], ENT_QUOTES, 'UTF-8'); ?></h1>
         </section>
 
-        <!-- start admin dashboard -->
+        <!-- Start admin dashboard -->
         <h1>Admin Dashboard</h1>
         <div class="row">
             <div class="col-lg-3 col-xs-6">
-                <div class="small-box bg-yellow">
+                <div class="small-box bg-red">
                     <div class="inner">
                         <h2><b><?= $assetCount; ?></b></h2>
                         <p>Assets</p>
@@ -255,13 +275,13 @@ $total_pages = ceil($assetCount / $limit);
             </div>
 
             <div class="col-lg-3 col-xs-6">
-                <div class="small-box bg-primary">
+                <div class="small-box bg-blue">
                     <div class="inner">
                         <h2><b><?= $categoryCount; ?></b></h2>
                         <p>Categories</p>
                     </div>
                     <div class="icon">
-                        <i class="ion-ios-folder"></i>
+                        <i class="ion ion-ios-list"></i>
                     </div>
                     <a href="admin/categories/data_categories.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
@@ -274,112 +294,74 @@ $total_pages = ceil($assetCount / $limit);
                         <p>Active Assets</p>
                     </div>
                     <div class="icon">
-                        <i class="ion-ios-checkmark"></i>
+                        <i class="ion ion-ios-checkmark"></i>
                     </div>
-                    <a href="" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="admin/asset/data_asset.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
 
             <div class="col-lg-3 col-xs-6">
-                <div class="small-box bg-red">
+                <div class="small-box bg-yellow">
                     <div class="inner">
                         <h2><b><?= $maintenanceAssets; ?></b></h2>
                         <p>Assets in Maintenance</p>
                     </div>
                     <div class="icon">
-                        <i class="ion-ios-gear"></i>
+                        <i class="ion ion-wrench"></i>
                     </div>
-                    <a href="" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+                    <a href="admin/asset/data_asset.php" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
                 </div>
             </div>
+        </div>
 
-            <!-- <div class="col-lg-3 col-xs-6">
-                <div class="small-box bg-purple">
-                    <div class="inner">
-                        <h2><b><?= $decommissionedAssets; ?></b></h2>
-                        <p>Decommissioned Assets</p>
-                    </div>
-                    <div class="icon">
-                        <i class="ion-ios-trash"></i>
-                    </div>
-                    <a href="" class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
-                </div>
+        <div class="box-content">
+            <div class="box-header">
+                <h3 class="box-title">Asset Details</h3>
             </div>
-        </div> -->
-        <!-- end admin dashboard -->
-
-        <br>
-        <br>
-
-        <section class="content-header">
-            <h1>Inventory Details</h1>
-        </section>
-
-        <form method="GET" action="">
-            <div class="form-group">
-                <label for="search">Search by Category or Asset Name:</label>
-                <input type="text" name="search" id="search" class="form-control" placeholder="Search..." value="<?= htmlspecialchars($search_keyword); ?>">
-            </div>
-            <button type="submit" class="btn btn-primary">Search</button>
-        </form>
-
-        <br>
-
-        <section class="box-content">
-            <div class="box">
-                <div class="box-header">
-                    <h3 class="box-title">Assets</h3>
-                </div>
-                <div class="box-body">
-                    <table id="example1" class="table table-bordered table-striped">
-                        <thead>
+            <div class="box-body">
+                <table class="table table-bordered table-hover table-striped">
+                    <thead>
+                        <tr>
+                            <th>No</th>
+                            <th>Asset Name</th>
+                            <th>Category</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($assets as $key => $asset): ?>
                             <tr>
-                                <th>Asset ID</th>
-                                <th>Name</th>
-                                <th>Category</th>
-                                <th>Status</th>
-                                <!-- <th>Actions</th> -->
+                                <td><?php echo $key + 1 + $start_from; ?></td>
+                                <td><?php echo htmlspecialchars($asset['name'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo htmlspecialchars($asset['category_id'], ENT_QUOTES, 'UTF-8'); ?></td>
+                                <td><?php echo htmlspecialchars($asset['status'], ENT_QUOTES, 'UTF-8'); ?></td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            <?php foreach ($assets as $asset) : ?>
-                                <tr>
-                                    <td><?php echo htmlspecialchars($asset['id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                    <td><?php echo htmlspecialchars($asset['name'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                    <td><?php echo htmlspecialchars($asset['category_id'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                    <td><?php echo htmlspecialchars($asset['status'], ENT_QUOTES, 'UTF-8'); ?></td>
-                                    <!-- <td>
-                                        <a href="edit_asset.php?id=<?php echo $asset['id']; ?>" class="btn btn-primary btn-sm">Edit</a>
-                                        <a href="delete_asset.php?id=<?php echo $asset['id']; ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this asset?');">Delete</a>
-                                    </td> -->
-                                </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
 
-                    <ul class="pagination">
-                        <?php for ($i = 1; $i <= $total_pages; $i++) : ?>
-                            <li class="<?php if ($page == $i) echo 'active'; ?>"><a href="?page=<?= $i; ?>&limit=<?= $limit; ?>&search=<?= htmlspecialchars($search_keyword); ?>"><?= $i; ?></a></li>
+                <div class="pagination">
+                    <ul>
+                        <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                            <li class="<?php echo $i == $page ? 'active' : ''; ?>">
+                                <a href="?page=<?php echo $i; ?>&search=<?php echo htmlspecialchars($search_keyword, ENT_QUOTES, 'UTF-8'); ?>&limit=<?php echo $limit; ?>"><?php echo $i; ?></a>
+                            </li>
                         <?php endfor; ?>
                     </ul>
                 </div>
             </div>
-        </section>
+        </div>
+        <!-- End admin dashboard -->
     </div>
 
+    <!-- Scripts -->
     <script src="plugins/jQuery/jquery-2.2.3.min.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
-    <script src="plugins/select2/select2.full.min.js"></script>
     <script src="plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="plugins/datatables/dataTables.bootstrap.min.js"></script>
-    <script src="plugins/slimScroll/jquery.slimscroll.min.js"></script>
-    <script src="plugins/fastclick/fastclick.js"></script>
+    <script src="plugins/select2/select2.full.min.js"></script>
     <script src="dist/js/app.min.js"></script>
-    <script>
-        $(function() {
-            $("#example1").DataTable();
-        });
-    </script>
+    <script src="dist/js/demo.js"></script>
 </body>
 
 </html>

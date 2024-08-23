@@ -54,6 +54,7 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll();
     <style>
         .wrapper {
             display: flex;
+            flex-direction: row;
             width: 100%;
         }
 
@@ -62,7 +63,6 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll();
             background-color: #222d32;
             height: 100vh;
             position: fixed;
-            left: 0;
             top: 0;
             overflow-y: auto;
         }
@@ -70,7 +70,7 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll();
         .content-wrapper {
             margin-left: 250px;
             padding: 20px;
-            width: 100%;
+            flex-grow: 1;
         }
 
         .sidebar a {
@@ -102,6 +102,46 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll();
         .sidebar .header a:hover {
             color: #b8c7ce;
         }
+
+        .small-box {
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: white;
+        }
+
+        .small-box .icon {
+            font-size: 70px;
+            top: 10px;
+            right: 10px;
+            opacity: 0.4;
+        }
+
+        .box {
+            background: #fff;
+            border-radius: 5px;
+            box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+
+        .box-header {
+            margin-bottom: 20px;
+        }
+
+        .box-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+        }
+
+        table thead th {
+            background-color: #f4f4f4;
+        }
     </style>
 </head>
 
@@ -111,14 +151,14 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll();
             <div class="header">
                 <a href="dashboard.php">Dashboard</a>
             </div>
-            <a href="dashboard.php">Home</a>
-            <a href="?page=users">Profile</a>
-            <a href="logout.php">Logout</a>
+            <ul class="nav">
+                <li><a href="logout.php"><i class="fa fa-sign-out"></i> Logout</a></li>
+            </ul>
         </nav>
 
         <div class="content-wrapper">
             <section class="content-header">
-                <h1><a class="btn btn-danger"><b>DASHBOARD | User</b></a></h1>
+                <h1><a class="btn btn-danger"><b>DASHBOARD | <?= $user['username']; ?></b></a></h1>
             </section>
             <hr>
             <section class="content">
@@ -180,7 +220,6 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll();
                     <div class="col-md-12">
                         <div class="box">
                             <div class="box-header">
-                                <!-- Tabel asset -->
                                 <h3 class="box-title">Assets</h3>
                             </div>
                             <div class="box-body">
@@ -199,50 +238,14 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll();
                                                 <td><?= $asset['id']; ?></td>
                                                 <td><?= $asset['name']; ?></td>
                                                 <td><?= $asset['status']; ?></td>
-                                                <td><?= $asset['category'] ?? 'N/A'; ?></td>
+                                                <td><?= $asset['category_id']; ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                    </div>
-                </div>
-                <!-- Tabel Categories -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="box">
-                            <div class="box-header">
-                                <h3 class="box-title">Categories</h3>
-                            </div>
-                            <div class="box-body">
-                                <table id="categoriesTable" class="table table-bordered table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>Name</th>
-                                            <th>Description</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <?php
-                                        $categories = $pdo->query("SELECT * FROM categories")->fetchAll();
-                                        foreach ($categories as $category) : ?>
-                                            <tr>
-                                                <td><?= $category['id']; ?></td>
-                                                <td><?= $category['name']; ?></td>
-                                                <td><?= $category['description']; ?></td>
-                                            </tr>
-                                        <?php endforeach; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- Tabel Inventory Details -->
-                <div class="row">
-                    <div class="col-md-12">
+
                         <div class="box">
                             <div class="box-header">
                                 <h3 class="box-title">Inventory Details</h3>
@@ -259,13 +262,39 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll();
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <?php foreach ($inventory_details as $detail) : ?>
+                                        <?php foreach ($inventory_details as $inventory) : ?>
                                             <tr>
-                                                <td><?= $detail['asset_id']; ?></td>
-                                                <td><?= $detail['ip_address']; ?></td>
-                                                <td><?= $detail['mac_address']; ?></td>
-                                                <td><?= $detail['location']; ?></td>
-                                                <td><?= $detail['notes']; ?></td>
+                                                <td><?= $inventory['asset_id']; ?></td>
+                                                <td><?= $inventory['ip_address']; ?></td>
+                                                <td><?= $inventory['mac_address']; ?></td>
+                                                <td><?= $inventory['location']; ?></td>
+                                                <td><?= $inventory['notes']; ?></td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="box">
+                            <div class="box-header">
+                                <h3 class="box-title">User Management</h3>
+                            </div>
+                            <div class="box-body">
+                                <table id="usersTable" class="table table-bordered table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Username</th>
+                                            <th>Role</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <?php foreach ($users as $user) : ?>
+                                            <tr>
+                                                <td><?= $user['id']; ?></td>
+                                                <td><?= $user['username']; ?></td>
+                                                <td><?= $user['role']; ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     </tbody>
@@ -278,45 +307,17 @@ $users = $pdo->query("SELECT * FROM users")->fetchAll();
         </div>
     </div>
 
-    <script src="plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="plugins/jQuery/jquery-2.2.3.min.js"></script>
     <script src="bootstrap/js/bootstrap.min.js"></script>
     <script src="plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="plugins/datatables/dataTables.bootstrap.min.js"></script>
     <script src="plugins/select2/select2.full.min.js"></script>
     <script>
-        $(function() {
-            $('#assetsTable').DataTable();
-            $('#categoriesTable').DataTable();
-            $('#inventoryTable').DataTable();
-            $('#usersTable').DataTable();
+        $(function () {
+            $("#assetsTable").DataTable();
+            $("#inventoryTable").DataTable();
+            $("#usersTable").DataTable();
         });
     </script>
-
-    <?php
-    echo "Welcome to the Dashboard, " . htmlspecialchars($user['username']) . "! <a href='logout.php'>Logout</a><br>";
-
-    // Display options based on user role
-    if (isset($user['role'])) {
-        switch ($user['role']) {
-            case 'admin':
-                echo "<a href='view_assets.php'>View Assets</a><br>";
-                echo "<a href='add_asset.php'>Add Asset</a><br>";
-                echo "<a href='manage_categories.php'>Manage Categories</a><br>";
-                break;
-            case 'karyawan':
-                echo "<a href='view_assets.php'>View Assets</a><br>";
-                break;
-            case 'user':
-                echo "<a href='view_assets.php'>View Available Assets</a><br>";
-                break;
-            default:
-                echo "Your role does not have any specific options available.";
-                break;
-        }
-    } else {
-        echo "Role information is missing for your account.";
-    }
-    ?>
 </body>
-
 </html>

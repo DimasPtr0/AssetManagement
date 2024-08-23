@@ -129,6 +129,7 @@ $result = $conn->query($sql);
                 <tr>
                     <th>ID</th>
                     <th>Category ID</th>
+                    <th>Unit</th>
                     <th>Name</th>
                     <th>Serial Number</th>
                     <th>People Name</th>
@@ -150,6 +151,7 @@ $result = $conn->query($sql);
                         echo "<tr>";
                         echo "<td>" . $row['id'] . "</td>";
                         echo "<td>" . $row['category_id'] . "</td>";
+                        echo "<td>" . $row['unit'] . "</td>";
                         echo "<td>" . $row['name'] . "</td>";
                         echo "<td>" . $row['serial_number'] . "</td>";
                         echo "<td>" . $row['people_name'] . "</td>";

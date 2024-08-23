@@ -14,6 +14,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
     case 'POST':
         $id = $_POST['id'];
         $category_id = $_POST['category_id'];
+        $unit = $_POST['unit']; 
         $name = $_POST['name'];
         $serial_number = $_POST['serial_number'];
         $purchase_date = $_POST['purchase_date'];
@@ -21,25 +22,18 @@ switch ($_SERVER['REQUEST_METHOD']) {
         $people_name = $_POST['people_name'];
         $jabatan = $_POST['jabatan'];
         $status = $_POST['status'];
-        $ip_address = $_POST['ip_address'];
-        $mac_address = $_POST['mac_address'];
-        $location = $_POST['location'];
-        $notes = $_POST['notes'];
 
         // Update asset data
         $sql = "UPDATE assets SET 
                     category_id='$category_id', 
+                    unit='$unit',
                     name='$name', 
                     serial_number='$serial_number', 
                     purchase_date='$purchase_date', 
                     warranty_end_date='$warranty_end_date', 
                     people_name='$people_name', 
                     jabatan='$jabatan', 
-                    status='$status', 
-                    ip_address='$ip_address', 
-                    mac_address='$mac_address', 
-                    location='$location', 
-                    notes='$notes' 
+                    status='$status'
                 WHERE id='$id'";
 
         if ($conn->query($sql) === TRUE) {
@@ -48,6 +42,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             echo "Error: $sql<br>{$conn->error}";
         }
         break;
+
     default:
         $id = $_GET['id'];
         $sql = "SELECT * FROM assets WHERE id='$id'";
@@ -81,6 +76,10 @@ $conn->close();
                 <input type="text" class="form-control" id="category_id" name="category_id" value="<?php echo htmlspecialchars($row['category_id'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
             </div>
             <div class="form-group">
+                <label for="unit">Unit:</label> 
+                <input type="text" class="form-control" id="unit" name="unit" required>
+            </div>
+            <div class="form-group">
                 <label for="name">Name:</label>
                 <input type="text" class="form-control" id="name" name="name" value="<?php echo htmlspecialchars($row['name'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
             </div>
@@ -110,22 +109,6 @@ $conn->close();
                     <option value="active" <?php if(isset($row['status']) && $row['status'] == 'active') echo 'selected'; ?>>Active</option>
                     <option value="maintenance" <?php if(isset($row['status']) && $row['status'] == 'maintenance') echo 'selected'; ?>>Maintenance</option>
                 </select>
-            </div>
-            <div class="form-group">
-                <label for="ip_address">IP Address:</label>
-                <input type="text" class="form-control" id="ip_address" name="ip_address" value="<?php echo htmlspecialchars($row['ip_address'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="mac_address">MAC Address:</label>
-                <input type="text" class="form-control" id="mac_address" name="mac_address" value="<?php echo htmlspecialchars($row['mac_address'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="location">Location:</label>
-                <input type="text" class="form-control" id="location" name="location" value="<?php echo htmlspecialchars($row['location'] ?? '', ENT_QUOTES, 'UTF-8'); ?>" required>
-            </div>
-            <div class="form-group">
-                <label for="notes">Notes:</label>
-                <textarea class="form-control" id="notes" name="notes" required><?php echo htmlspecialchars($row['notes'] ?? '', ENT_QUOTES, 'UTF-8'); ?></textarea>
             </div>
             <button type="submit" class="btn btn-primary">Update Asset</button>
         </form>
